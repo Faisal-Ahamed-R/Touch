@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Touch Events with Pop-up</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .container {
+            margin-top: 50px;
+            text-align: center;
+        }
+
+        .element {
+            width: 200px;
+            height: 100px;
+            background-color: #3498db;
+            color: white;
+            line-height: 100px;
+            border-radius: 8px;
+            cursor: pointer;
+            user-select: none;
+            transition: transform 0.3s;
+        }
+
+        .pop-up {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            font-size: 18px;
+            z-index: 999;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .scrollable-container {
+            width: 100%;
+            height: 300px;
+            overflow: scroll;
+            margin-top: 50px;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+
+        .content {
+            height: 1000px; /* Just to make the element scrollable */
+            background: linear-gradient(white, lightgray);
+        }
+    </style>
+</head>
+<body>
+
+<h1>Interactive Touch Events with Pop-up</h1>
+
+<!-- Clickable Element -->
+<div class="container">
+    <div id="element" class="element">
+        Touch Me
+    </div>
+</div>
+
+<!-- Pop-up Message -->
+<div id="popUp" class="pop-up">
+    You have touched the element!
+</div>
+
+<!-- Scrollable Container -->
+<div class="scrollable-container" id="scrollContainer">
+    <div class="content"></div>
+</div>
+
+<script>
+    // Get references to DOM elements
+    const element = document.getElementById('element');
+    const popUp = document.getElementById('popUp');
+    const scrollContainer = document.getElementById('scrollContainer');
+
+    // Flag to track whether the pop-up is visible or not
+    let isPopUpVisible = false;
+
+    // Function to toggle the pop-up visibility
+    function togglePopUp() {
+        if (isPopUpVisible) {
+            popUp.style.display = 'none'; // Hide the pop-up
+        } else {
+            popUp.style.display = 'block'; // Show the pop-up
+        }
+        isPopUpVisible = !isPopUpVisible; // Toggle the flag
+    }
+
+    // Event listeners for touch events
+    element.addEventListener('touchstart', function(e) {
+        e.preventDefault(); // Prevent scrolling when the element is touched
+        togglePopUp();
+    });
+
+    // Event listener for click (on desktop)
+    element.addEventListener('click', function() {
+        togglePopUp();
+    });
+
+    // Touch event to hide the pop-up when touching anywhere else on the screen
+    document.addEventListener('touchstart', function(e) {
+        // Check if the touch was outside the element
+        if (!element.contains(e.target)) {
+            if (isPopUpVisible) {
+                popUp.style.display = 'none';
+                isPopUpVisible = false;
+            }
+        }
+    });
+
+    // Prevent touchstart event from closing the pop-up when touching the element
+    element.addEventListener('touchstart', function(e) {
+        e.stopPropagation(); // Stop event propagation to document's touchstart
+    });
+
+    // Scroll event detection
+    scrollContainer.addEventListener('scroll', function() {
+        if (isPopUpVisible) {
+            // Hide the pop-up when scrolling starts
+            popUp.style.display = 'none';
+            isPopUpVisible = false;
+        }
+    });
+</script>
+
+</body>
+</html>
